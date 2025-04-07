@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calculate CGPA</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh; /* Ensure full viewport height */
+      color: white;
+      overflow: hidden;
+      animation: fadeIn 1s ease-in-out;
+      position: relative; /* For positioning the background image */
+    }
+
+    /* Background Image Overlay */
+    body::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: url('Assets/mycollege.jpg'); /* Replace with your image path */
+      background-size: cover;
+      background-position: center;
+      opacity: 0.7; /* Adjust opacity as needed */
+      filter: blur(1px); /* Optional blur effect */
+      z-index: -1; /* Place behind content */
+    }
+
+    .container {
+      background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white for better visibility */
+      padding: 40px 60px;
+      border-radius: 20px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5); /* More pronounced shadow */
+      text-align: center;
+      animation: slideIn 1s ease;
+      color: #333; /* Dark text for better contrast */
+      z-index: 1; /* Ensure container is above the background */
+      max-width: 600px; /* Limit container width */
+      width: 90%; /* Make container responsive */
+    }
+
+    h1 {
+      font-size: 34px;
+      margin-bottom: 30px;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      color: #2575fc; /* Highlighted title */
+    }
+
+    .input-group {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    input[type="number"] {
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ddd; /* Added border for better visibility */
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s ease;
+      color: #333; /* Dark text */
+    }
+
+    input[type="number"]:focus {
+      outline: none;
+      transform: scale(1.05);
+      border-color: #2575fc; /* Highlight on focus */
+    }
+
+    .button {
+      display: inline-block;
+      margin: 10px;
+      padding: 15px 30px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #fff;
+      background-color: #2575fc; /* Solid button color */
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      box-shadow: 0 8px 25px rgba(37, 117, 252, 0.4); /* More prominent shadow */
+    }
+
+    .button:hover {
+      background-color: #1e60da; /* Darker hover color */
+      transform: scale(1.08);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .result {
+      margin-top: 25px;
+      font-size: 24px;
+      font-weight: bold;
+      animation: fadeIn 1s ease-in-out;
+      color: #2575fc; /* Highlighted result */
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(100vh);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>ENTER YOUR SEMESTER GPAs</h1>
+    <div class="input-group">
+      <input type="number" step="0.01" min="0" max="4" placeholder="Semester 1" class="gpa-input" />
+      <input type="number" step="0.01" min="0" max="4" placeholder="Semester 2" class="gpa-input" />
+      <input type="number" step="0.01" min="0" max="4" placeholder="Semester 3" class="gpa-input" />
+      <input type="number" step="0.01" min="0" max="4" placeholder="Semester 4" class="gpa-input" />
+      <input type="number" step="0.01" min="0" max="4" placeholder="Semester 5" class="gpa-input" />
+      <input type="number" step="0.01" min="0" max="4" placeholder="Semester 6" class="gpa-input" />
+      <input type="number" step="0.01" min="0" max="4" placeholder="Semester 7" class="gpa-input" />
+      <input type="number" step="0.01" min="0" max="4" placeholder="Semester 8" class="gpa-input" />
+    </div>
+    <button class="button" onclick="calculateCGPA()">CALCULATE CGPA</button>
+    <button class="button" onclick="clearInputs()">CLEAR</button>
+    <div class="result" id="resultBox"></div>
+  </div>
+
+  <script>
+    function calculateCGPA() {
+      const inputs = document.querySelectorAll('.gpa-input');
+      let total = 0;
+      let count = 0;
+      let invalid = false;
+
+      inputs.forEach(input => {
+        const val = parseFloat(input.value);
+        if (input.value !== "") {
+          if (val < 0 || val > 4) {
+            invalid = true;
+            input.style.border = "2px solid red";
+          } else {
+            input.style.border = "1px solid #ddd"; // Reset border
+            total += val;
+            count++;
+          }
+        } else {
+          input.style.border = "1px solid #ddd"; // Reset border if cleared
+        }
+      });
+
+      const resultBox = document.getElementById("resultBox");
+
+      if (invalid) {
+        resultBox.textContent = "Please enter GPA values between 0.00 and 4.00.";
+        return;
+      }
+
+      if (count === 0) {
+        resultBox.textContent = "Please enter at least one GPA.";
+      } else {
+        const avg = (total / count).toFixed(2);
+        resultBox.textContent = `Your CGPA is: ${avg}`;
+      }
+    }
+
+    function clearInputs() {
+      const inputs = document.querySelectorAll('.gpa-input');
+      inputs.forEach(input => {
+        input.value = "";
+        input.style.border = "1px solid #ddd";
+      });
+      document.getElementById("resultBox").textContent = "";
+    }
+  </script>
+</body>
+
+</html>

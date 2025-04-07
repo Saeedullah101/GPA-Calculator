@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GPA Calculator</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      padding: 0;
+      margin: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      overflow: hidden;
+      animation: bodyFade 1s ease-in-out;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background-image: url('Assets/mycollege.jpg');
+      background-size: cover;
+      background-position: center;
+      opacity: 0.7;
+      filter: blur(1px);
+      z-index: -2;
+      animation: zoomIn 20s ease-in-out infinite alternate;
+    }
+
+    header {
+      padding: 20px;
+      text-align: center;
+      animation: fadeInDown 1.5s ease-in-out;
+    }
+
+    header h1 {
+      color: white;
+      font-size: 48px;
+      letter-spacing: 1.5px;
+      text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+
+    header span {
+      display: block;
+      margin-top: 5px;
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: #f7f6f6;
+      animation: fadeIn 3s ease-in-out;
+    }
+
+    .container {
+      max-width: 500px;
+      background: rgba(255, 255, 255, 0.9);
+      margin: auto;
+      margin-top: 30px;
+      padding: 40px 30px;
+      border-radius: 25px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+      text-align: center;
+      animation: bounceIn 1s ease-out;
+    }
+
+    .container h2 {
+      font-size: 28px;
+      color: #2575fc;
+      margin-bottom: 30px;
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    .uni-button {
+      display: block;
+      width: 100%;
+      margin: 15px 0;
+      padding: 15px;
+      background-color: #2575fc;
+      color: white;
+      font-weight: bold;
+      font-size: 18px;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .uni-button::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: skewX(-20deg);
+      transition: left 0.5s ease;
+    }
+
+    .uni-button:hover::before {
+      left: 100%;
+    }
+
+    .uni-button:hover {
+      transform: scale(1.05);
+      background-color: white;
+      color: #2575fc;
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    .footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 15px 0;
+      background-color: #333;
+      text-align: center;
+      z-index: 2;
+      animation: fadeInUp 2s ease-in-out;
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+    }
+
+    .footer-link {
+      color: #fff;
+      text-decoration: none;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .footer-link:hover {
+      color: #00d4ff;
+      transform: scale(1.05);
+    }
+
+    .footer-link i {
+      font-size: 16px;
+    }
+
+    /* Animations */
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-50px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes bounceIn {
+      0% {
+        opacity: 0;
+        transform: scale(0.9) translateY(-100px);
+      }
+
+      60% {
+        opacity: 1;
+        transform: scale(1.05) translateY(20px);
+      }
+
+      100% {
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes bodyFade {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes zoomIn {
+      0% {
+        transform: scale(1);
+      }
+
+      100% {
+        transform: scale(1.05);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>GPA CALCULATOR</h1>
+    <span>Created by Saeed Ullah</span>
+  </header>
+
+  <div class="container">
+    <h2>Select a University</h2>
+    <button class="uni-button" onclick="openCalculator('University of Swat')">University of Swat</button>
+    <button class="uni-button" onclick="openCalculator('University of Malakand')">University of Malakand</button>
+    <button class="uni-button" onclick="openCalculator('University of Buner')">University of Buner</button>
+    <button class="uni-button" onclick="openCalculator('University of Peshawar')">University of Peshawar</button>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <a href="https://www.linkedin.com/in/saeed-ullah-684516335/" class="footer-link" target="_blank" rel="noopener">
+        <i class="fab fa-linkedin"></i> LinkedIn
+      </a>
+      <a href="https://github.com/Saeedullah101" class="footer-link" target="_blank" rel="noopener">
+        <i class="fab fa-github"></i> GitHub
+      </a>
+      <a href="mailto:saeed1199553@gmail.com" class="footer-link">
+        <i class="fas fa-envelope"></i> Gmail
+      </a>
+    </div>
+  </footer>
+
+  <script>
+    function openCalculator(universityName) {
+      const pages = {
+        'University of Swat': 'uo-swat(selectGPA).html',
+        'University of Malakand': 'uo-malakand(selectGPA).html',
+        'University of Buner': 'uo-buner(selectGPA).html',
+        'University of Peshawar': 'uo-peshawar(selectGPA).html'
+      };
+      if (pages[universityName]) {
+        window.location.href = pages[universityName];
+      }
+    }
+  </script>
+</body>
+
+</html>

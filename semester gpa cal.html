@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Semester GPA Calculator</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: white;
+            overflow: auto;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('Assets/mycollege.jpg');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.65;
+            filter: blur(1px);
+            z-index: -1;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 15px 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            max-width: 400px;
+            width: 80%;
+            animation: fadeIn 1s ease-in-out;
+            color: #333;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: #2575fc;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        th, td {
+            padding: 8px;
+            border-bottom: 1px solid #ccc;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        input[type="number"] {
+            width: 55px;
+            padding: 6px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            text-align: center;
+            font-size: 13px;
+            transition: transform 0.2s ease;
+            color: #333;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            transform: scale(1.05);
+            border-color: #2575fc;
+        }
+
+        .btn {
+            margin: 8px 4px;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: bold;
+            color: white;
+            background-color: #2575fc;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px rgba(37, 117, 252, 0.4);
+        }
+
+        .btn:hover {
+            background-color: #1e60da;
+            transform: scale(1.02);
+        }
+
+        .result {
+            margin-top: 10px;
+            font-size: 15px;
+            font-weight: bold;
+            color: #2575fc;
+        }
+
+        .error {
+            margin-top: 8px;
+            font-size: .8rem;
+            color: rgb(40, 40, 34);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Semester GPA Calculator</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Credit Hour (1-9)</th>
+                    <th>Marks (0-100)</th>
+                    <th>Value</th>
+                    <th>GP</th>
+                </tr>
+            </thead>
+            <tbody>
+                <script>
+                    for (let i = 1; i <= 8; i++) {
+                        document.write(`
+                            <tr>
+                                <td>Subject ${i}</td>
+                                <td><input type="number" class="credit" min="1" max="9" oninput="validateAndCalculateGP(${i})" /></td>
+                                <td><input type="number" class="marks" min="0" max="100" oninput="validateAndCalculateGP(${i})" /></td>
+                                <td id="value${i}">-</td>
+                                <td id="gp${i}">-</td>
+                            </tr>
+                        `);
+                    }
+                </script>
+            </tbody>
+        </table>
+
+        <button class="btn" onclick="calculateTotalGPA()">Calculate Total GPA</button>
+        <button class="btn" onclick="clearAll()">Clear</button>
+
+        <div class="result" id="totalGPA"></div>
+        <div class="error" id="validationMsg"></div>
+    </div>
+
+    <script>
+        function getGradePoint(marks) {
+            if (marks >= 85) return 4.0;
+            const scale = [
+                [84, 3.9], [83, 3.8], [82, 3.7], [81, 3.6], [80, 3.5],
+                [79, 3.4], [78, 3.3], [77, 3.3], [76, 3.3], [75, 3.2],
+                [74, 3.1], [73, 3.1], [72, 3.0], [71, 2.9], [70, 2.8],
+                [69, 2.7], [68, 2.6], [67, 2.6], [66, 2.5], [65, 2.4],
+                [64, 2.4], [63, 2.3], [62, 2.2], [61, 2.1], [60, 2.0],
+                [59, 1.9], [58, 1.8], [57, 1.7], [56, 1.6], [55, 1.5],
+                [54, 1.4], [53, 1.3], [52, 1.2], [51, 1.1], [50, 1.0]
+            ];
+            for (let [score, value] of scale) {
+                if (marks === score) return value;
+            }
+            return 0.0;
+        }
+
+        function validateAndCalculateGP(index) {
+            const creditInput = document.getElementsByClassName("credit")[index - 1];
+            const marksInput = document.getElementsByClassName("marks")[index - 1];
+            const valueSpan = document.getElementById(`value${index}`);
+            const gpSpan = document.getElementById(`gp${index}`);
+            const validationMsg = document.getElementById("validationMsg");
+
+            const credit = parseFloat(creditInput.value);
+            const marks = parseFloat(marksInput.value);
+
+            validationMsg.textContent = "";
+
+            if (creditInput.value !== "" && (credit < 1 || credit > 9 || isNaN(credit))) {
+                validationMsg.textContent = "⚠️ Invalid credit hour! Please enter valid credit hour (1-9)";
+                valueSpan.textContent = "-";
+                gpSpan.textContent = "-";
+                return;
+            }
+
+            if (marksInput.value !== "" && (marks < 0 || marks > 100 || isNaN(marks))) {
+                validationMsg.textContent = "⚠️ Invalid marks! Please enter correct marks (0-100)";
+                valueSpan.textContent = "-";
+                gpSpan.textContent = "-";
+                return;
+            }
+
+            let gradePoint = 0.0;
+            if (!isNaN(marks)) {
+                gradePoint = getGradePoint(marks);
+                valueSpan.textContent = gradePoint.toFixed(1);
+            } else {
+                valueSpan.textContent = "-";
+            }
+
+            if (!isNaN(credit) && !isNaN(marks)) {
+                gpSpan.textContent = (credit * gradePoint).toFixed(2);
+            } else {
+                gpSpan.textContent = "-";
+            }
+        }
+
+        function calculateTotalGPA() {
+            const credits = document.getElementsByClassName("credit");
+            const marks = document.getElementsByClassName("marks");
+            const validationMsg = document.getElementById("validationMsg");
+            let totalPoints = 0;
+            let totalCredits = 0;
+            let validSubjects = 0;
+
+            let allValid = true;
+            for (let i = 0; i < credits.length; i++) {
+                const credit = parseFloat(credits[i].value);
+                const mark = parseFloat(marks[i].value);
+
+                if (credit === "" || mark === "") continue;
+
+                if ((credit < 1 || credit > 9 || isNaN(credit)) ||
+                    (mark < 0 || mark > 100 || isNaN(mark))) {
+                    allValid = false;
+                    continue;
+                }
+
+                const point = getGradePoint(mark);
+                totalPoints += credit * point;
+                totalCredits += credit;
+                validSubjects++;
+            }
+
+            if (validSubjects === 0) {
+                validationMsg.textContent = "⚠️ Please fill in at least one subject to calculate GPA.";
+                return;
+            }
+
+            const totalGPA = totalPoints / totalCredits;
+            document.getElementById("totalGPA").textContent = `🎓 Total GPA: ${totalGPA.toFixed(2)}`;
+            if (!allValid) {
+                validationMsg.textContent = "⚠️ Some inputs are invalid.";
+            } else {
+                validationMsg.textContent = "";
+            }
+        }
+
+        function clearAll() {
+            const inputs = document.querySelectorAll("input");
+            inputs.forEach(input => input.value = "");
+
+            for (let i = 1; i <= 8; i++) {
+                document.getElementById(`value${i}`).textContent = "-";
+                document.getElementById(`gp${i}`).textContent = "-";
+            }
+
+            document.getElementById("totalGPA").textContent = "";
+            document.getElementById("validationMsg").textContent = "";
+        }
+    </script>
+</body>
+</html>
